@@ -3,6 +3,7 @@ import { logger } from "@yuudachi/framework";
 import type { Event } from "@yuudachi/framework/types";
 import { Events, Client } from "discord.js";
 import { injectable } from "tsyringe";
+import { registerJobs } from "../jobs.js";
 
 @injectable()
 export default class implements Event {
@@ -18,8 +19,10 @@ export default class implements Event {
 				msg: `Client ready`,
 				user: this.client.user.tag,
 				id: this.client.user.id,
-				guilds: this.client.guilds.cache.map((guild) => guild.name),
+				guilds: this.client.guilds.cache.size,
+				approximateMembers: this.client.guilds.cache.reduce((total, current) => total + current.memberCount, 0),
 			});
+			await registerJobs();
 		}
 	}
 }

@@ -3,6 +3,11 @@ import process from "node:process";
 import { logger } from "@yuudachi/framework";
 import { Routes, REST } from "discord.js";
 import {
+	BanCommand,
+	ClearCommand,
+	ClearContextCommand,
+	ReasonCommand,
+	GithubCommand,
 	UserInfoCommand,
 	UserInfoContextCommand,
 } from "./interactions/index.js";
@@ -13,11 +18,19 @@ try {
 	logger.info("Start refreshing interaction (/) commands.");
 
 	const body: unknown[] = [
+		// Moderation
+		BanCommand,
+		ClearCommand,
+		ClearContextCommand,
+		ReasonCommand,
+
+		// Utility
+		GithubCommand,
 		UserInfoCommand,
 		UserInfoContextCommand,
 	];
 
-	await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID!, process.env.DISCORD_GUILD_ID!), {
+	await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!), {
 		body,
 	});
 

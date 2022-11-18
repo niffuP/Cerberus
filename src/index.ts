@@ -10,14 +10,28 @@ import {
 	logger,
 } from "@yuudachi/framework";
 import type { CommandPayload, Event } from "@yuudachi/framework/types";
-import { Client, GatewayIntentBits, Options } from "discord.js";
+import { Client, GatewayIntentBits, Options, Partials } from "discord.js";
 import readdirp from "readdirp";
+import { createMongo } from "./util/mongo.js";
+import { createRedis } from "./util/redis.js";
 import { createWebhooks } from "./util/webhooks.js";
 
+await createRedis();
+await createMongo();
+
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildBans,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.MessageContent,
+		1 << 21, // AutoModActionExecution
+	],
+	partials: [Partials.GuildMember],
 	makeCache: Options.cacheWithLimits({
-		MessageManager: 10,
+		MessageManager: 100,
 		StageInstanceManager: 10,
 		VoiceStateManager: 10,
 	}),
